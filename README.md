@@ -65,6 +65,20 @@ Outputs are saved to `./runs/{flowers,car}/`:
 - `concept_gallery/` — top-30 concept visualizations
 - `visuals/final/` — visual strips for test images
 
+### Generating Figures (after training)
+
+```bash
+# Figures A-E: pipeline visualization (SLIC, deviation map, FG mask, masking effect, concept maps)
+python paper_scripts/compose_figures.py --run_dir ./runs/car     --tag _car     --n 4 --n_e 6
+python paper_scripts/compose_figures.py --run_dir ./runs/flowers --tag _flowers --n 4 --n_e 6
+
+# Figure F: progressive concept removal curve
+python paper_scripts/gen_fig_F_progressive.py
+# -> figures/fig_F_progressive_{car,flowers}.png
+```
+
+Pre-generated figures are available in `figures/`.
+
 ---
 
 ## Dataset Details
