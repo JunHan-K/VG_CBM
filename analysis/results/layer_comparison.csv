@@ -1,0 +1,4 @@
+layer,d_in,baseline_acc,sae_z_acc,delta,spatial_resolution,note
+layer2,512,32.59,52.81,+20.22,28x28,Large SAE boost but low absolute acc
+layer3,1024,61.59,75.02,+13.43,14x14,Best SAE-Z acc — chosen tap point
+layer4,2048,72.26,74.88,+2.62,7x7,Marginal SAE boost; too coarse for spatial concepts
