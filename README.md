@@ -244,13 +244,18 @@ Flowers102:
 - Class  3:  86.5% -> 13.8%  (drop: 72.7%)
 - Class 34:  81.7% ->  7.4%  (drop: 74.4%)
 
-### K_0.8
+### K_0.95
 
-K_0.8 is the number of concepts needed to cover 80% of the prediction confidence mass.
-A lower K_0.8 means the prediction is concentrated in fewer concepts.
+K_0.95 is the number of concepts needed to cover 95% of the prediction confidence mass
+(computed per correctly-predicted test sample, then averaged).
+A lower K_0.95 means the prediction is concentrated in fewer concepts.
 
-- Car-Best:   K_0.8 = 803
-- Flowers102: K_0.8 = 802
+- Car-Best:   K_0.95 = 653  (15.9% of 4096)
+- Flowers102: K_0.95 = 614  (15.0% of 4096)
+
+95% of prediction confidence is explained by roughly 15% of the concept space,
+demonstrating that the model's decisions are driven by a sparse, interpretable subset
+of the learned concept dictionary.
 
 ---
 

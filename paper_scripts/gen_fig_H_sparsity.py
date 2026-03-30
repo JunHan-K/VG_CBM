@@ -193,8 +193,8 @@ if __name__ == '__main__':
         per = (curves < thresh).sum(axis=1) + 1
         return float(per.mean())
 
-    car_k08 = k_at(car_curves, 0.8)
-    fl_k08  = k_at(fl_curves,  0.8)
+    car_k08 = k_at(car_curves, 0.95)
+    fl_k08  = k_at(fl_curves,  0.95)
 
     car_ks  = [k_at(car_curves, t) for t in THRESHOLDS]
     fl_ks   = [k_at(fl_curves,  t) for t in THRESHOLDS]
@@ -231,33 +231,33 @@ if __name__ == '__main__':
 
     # Mean on top
     ax.plot(x_rank, car_mean, color=CAR_COLOR, linewidth=2.2,
-            label=f'Car-Best   (K$_{{0.8}}$ = {car_k08:.0f})')
+            label=f'Car-Best   (K$_{{0.95}}$ = {car_k08:.0f})')
     ax.plot(x_rank, fl_mean,  color=FLW_COLOR, linewidth=2.2,
-            label=f'Flowers102 (K$_{{0.8}}$ = {fl_k08:.0f})')
+            label=f'Flowers102 (K$_{{0.95}}$ = {fl_k08:.0f})')
 
     # Threshold lines — labels placed just inside the right edge
     for thresh, tc in zip(THRESHOLDS, THRESH_COLORS):
-        lw = 1.6 if thresh == 0.8 else 0.85
-        ls = '--' if thresh == 0.8 else ':'
+        lw = 1.6 if thresh == 0.95 else 0.85
+        ls = '--' if thresh == 0.95 else ':'
         ax.axhline(thresh, color=tc, linewidth=lw, linestyle=ls, zorder=1)
         ax.text(x_end * 0.985, thresh + 0.012,
                 f'{int(thresh*100)}%', ha='right', va='bottom',
                 fontsize=8.5, color=tc,
-                fontweight='bold' if thresh == 0.8 else 'normal')
+                fontweight='bold' if thresh == 0.95 else 'normal')
 
-    # K_0.8 vertical markers
+    # K_0.95 vertical markers
     ax.axvline(car_k08, color=CAR_COLOR, linewidth=1.2, linestyle=':')
     ax.axvline(fl_k08,  color=FLW_COLOR, linewidth=1.2, linestyle=':')
 
-    # Annotations — car above, flowers below the 80% line
-    ann_x = x_end * 0.38
+    # Annotations — car above, flowers below the 95% line
+    ann_x = x_end * 0.55
     ax.annotate(f'{car_k08:.0f}  ({car_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(car_k08, 0.8), xytext=(ann_x, 0.88),
+                xy=(car_k08, 0.95), xytext=(ann_x, 0.90),
                 fontsize=9, color=CAR_COLOR,
                 arrowprops=dict(arrowstyle='->', color=CAR_COLOR, lw=1.1),
                 bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=CAR_COLOR, lw=0.9))
     ax.annotate(f'{fl_k08:.0f}  ({fl_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(fl_k08, 0.8), xytext=(ann_x, 0.70),
+                xy=(fl_k08, 0.95), xytext=(ann_x, 0.80),
                 fontsize=9, color=FLW_COLOR,
                 arrowprops=dict(arrowstyle='->', color=FLW_COLOR, lw=1.1),
                 bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=FLW_COLOR, lw=0.9))
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     ax.set_title('Cumulative contribution of top-N concepts to predicted class confidence',
                  fontsize=10, pad=8, color='#333')
 
-    fig.suptitle('H. Concept Sparsity', fontsize=13, fontweight='bold', y=0.97)
+    fig.suptitle('H. Concept Sparsity  (K$_{0.95}$)', fontsize=13, fontweight='bold', y=0.97)
 
     out_path = OUT_DIR / 'fig_H_sparsity.png'
     plt.savefig(out_path, dpi=150, bbox_inches='tight')

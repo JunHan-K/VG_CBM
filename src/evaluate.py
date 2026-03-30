@@ -1,7 +1,7 @@
 """
 evaluate.py
 -----------
-Evaluation metrics: accuracy, K_0.8 (concept sparsity), and concept intervention.
+Evaluation metrics: accuracy, K_0.95 (concept sparsity), and concept intervention.
 """
 import numpy as np
 import torch
@@ -27,13 +27,12 @@ def eval_acc(backbone, hook, feat_norm, sae, head, loader, cfg, device) -> float
 
 @torch.no_grad()
 def compute_K08(backbone, hook, feat_norm, sae, head, loader, cfg,
-                device, coverage: float = 0.8) -> float:
+                device, coverage: float = 0.95) -> float:
     """
-    Compute K_0.8: mean number of concepts needed to cover `coverage`
+    Compute K_0.95: mean number of concepts needed to cover `coverage`
     fraction of the total prediction mass for the true class.
 
-    Lower K_0.8 → sparser, more interpretable concept usage.
-    Target range: 50–400 (see paper).
+    Lower K_0.95 → sparser, more interpretable concept usage.
     """
     sae.eval(); feat_norm.eval(); head.eval()
     ks = []

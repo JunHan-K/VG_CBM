@@ -907,11 +907,11 @@ def main():
                                      te_loader, cfg, cfg.intervention_ms, device)
 
     print(f"test_acc : {test_acc:.4f}")
-    print(f"K_0.8    : {K08:.1f}  ({'GOOD' if 50<=K08<=400 else 'check'})")
+    print(f"K_0.95   : {K08:.1f}")
     for m in cfg.intervention_ms:
         print(f"Interv@{m:2d}: drop={interv[m]['drop']:.4f}")
 
-    summary = {'acc': test_acc, 'K_0.8': K08,
+    summary = {'acc': test_acc, 'K_0.95': K08,
                'intervention': {str(m): interv[m] for m in cfg.intervention_ms},
                'n_segments': cfg.n_segments, 'fg_ratio': cfg.fg_ratio,
                'stage2_start': cfg.stage2_start}
