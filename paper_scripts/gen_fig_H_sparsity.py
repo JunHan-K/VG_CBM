@@ -211,15 +211,15 @@ if __name__ == '__main__':
     FLW_COLOR = '#27ae60'
     THRESH_COLORS = ['#bdc3c7', '#95a5a6', '#e74c3c', '#8e44ad', '#2c3e50']
 
-    # ── Clip x-axis to where curve is still changing (95th pct crosses 0.99) ──
+    # ── Clip x-axis: 50% to where curve flattens (99%) ──────────────────────
     avg_mean = (car_mean + fl_mean) / 2
-    x_start  = 0
-    x_end    = int(np.argmax(avg_mean >= 0.99)) + 50   # a bit past 99%
+    x_start  = max(0, int(np.argmax(avg_mean >= 0.50)) - 10)
+    x_end    = int(np.argmax(avg_mean >= 0.99)) + 40
     x_end    = min(x_end, K_TOTAL)
 
     # ── Single panel ─────────────────────────────────────────────────────────
-    fig, ax = plt.subplots(figsize=(7, 5.0))
-    fig.subplots_adjust(left=0.12, right=0.95, top=0.88, bottom=0.13)
+    fig, ax = plt.subplots(figsize=(8, 3.8))
+    fig.subplots_adjust(left=0.10, right=0.95, top=0.85, bottom=0.15)
 
     # Draw individual sample curves (random subset) to show real data
     rng = np.random.default_rng(42)
@@ -265,9 +265,9 @@ if __name__ == '__main__':
     ax.set_xlabel('Concepts (ranked by contribution)', fontsize=10.5)
     ax.set_ylabel('Cumulative confidence fraction', fontsize=10.5)
     ax.set_xlim(x_start, x_end)
-    ax.set_ylim(0.0, 1.04)
-    ax.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
-    ax.set_yticklabels(['0%', '20%', '40%', '60%', '80%', '100%'])
+    ax.set_ylim(0.48, 1.02)
+    ax.set_yticks([0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+    ax.set_yticklabels(['50%', '60%', '70%', '80%', '90%', '100%'])
     ax.spines[['top', 'right']].set_visible(False)
     ax.legend(fontsize=10, framealpha=0.9, loc='lower right')
     ax.grid(axis='y', linestyle='--', alpha=0.28)
