@@ -249,17 +249,18 @@ if __name__ == '__main__':
     ax.axvline(car_k08, color=CAR_COLOR, linewidth=1.2, linestyle=':')
     ax.axvline(fl_k08,  color=FLW_COLOR, linewidth=1.2, linestyle=':')
 
-    # Annotations — car above, flowers below the 95% line
-    ann_x = x_end * 0.55
-    ax.annotate(f'{car_k08:.0f}  ({car_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(car_k08, 0.95), xytext=(ann_x, 0.90),
+    # Annotations — placed in the open left region, arrows pointing to 95% intercepts
+    ax.annotate(f'Car-Best: {car_k08:.0f}  ({car_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
+                xy=(car_k08, 0.95), xytext=(x_end * 0.18, 0.97),
                 fontsize=9, color=CAR_COLOR,
-                arrowprops=dict(arrowstyle='->', color=CAR_COLOR, lw=1.1),
+                arrowprops=dict(arrowstyle='->', color=CAR_COLOR, lw=1.1,
+                                connectionstyle='arc3,rad=-0.2'),
                 bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=CAR_COLOR, lw=0.9))
-    ax.annotate(f'{fl_k08:.0f}  ({fl_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(fl_k08, 0.95), xytext=(ann_x, 0.80),
+    ax.annotate(f'Flowers102: {fl_k08:.0f}  ({fl_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
+                xy=(fl_k08, 0.95), xytext=(x_end * 0.18, 0.84),
                 fontsize=9, color=FLW_COLOR,
-                arrowprops=dict(arrowstyle='->', color=FLW_COLOR, lw=1.1),
+                arrowprops=dict(arrowstyle='->', color=FLW_COLOR, lw=1.1,
+                                connectionstyle='arc3,rad=0.2'),
                 bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=FLW_COLOR, lw=0.9))
 
     ax.set_xlabel('Concepts (ranked by contribution)', fontsize=10.5)
