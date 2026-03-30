@@ -26,7 +26,7 @@ def eval_acc(backbone, hook, feat_norm, sae, head, loader, cfg, device) -> float
 
 
 @torch.no_grad()
-def compute_K08(backbone, hook, feat_norm, sae, head, loader, cfg,
+def compute_K095(backbone, hook, feat_norm, sae, head, loader, cfg,
                 device, coverage: float = 0.95) -> float:
     """
     Compute K_0.95: mean number of concepts needed to cover `coverage`

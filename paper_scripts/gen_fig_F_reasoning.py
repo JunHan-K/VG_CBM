@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-gen_fig_G_results.py
+gen_fig_F_reasoning.py
 --------------------
 CBM reasoning figure: for each selected image, shows
   [original] [concept 1] [concept 2] [concept 3] [concept 4] | [contribution bar chart]
@@ -10,10 +10,10 @@ The bar chart shows HOW MUCH each top concept contributes to the predicted class
 
 Usage:
   # Step 1: scan and find best candidate indices
-  python paper_scripts/gen_fig_G_results.py --scan
+  python paper_scripts/gen_fig_F_reasoning.py --scan
 
   # Step 2: generate final figure with chosen indices
-  python paper_scripts/gen_fig_G_results.py \
+  python paper_scripts/gen_fig_F_reasoning.py \
       --car_idx   279 1059 872 \
       --flower_idx 1244 90 913
 """

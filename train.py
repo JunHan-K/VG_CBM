@@ -502,7 +502,7 @@ def eval_acc(backbone, hook, feat_norm, sae, head, loader, cfg, device):
 
 
 @torch.no_grad()
-def compute_K08(backbone, hook, feat_norm, sae, head, loader, cfg, device, coverage=0.8):
+def compute_K095(backbone, hook, feat_norm, sae, head, loader, cfg, device, coverage=0.95):
     sae.eval(); feat_norm.eval(); head.eval()
     ks = []
     for x, slic_224, y in loader:
@@ -754,7 +754,7 @@ class CFG:
     # Head training
     head_epochs:  int   = 30
     head_lr:      float = 1e-3
-    head_l1:      float = 0.06    # (0.03→0.06 for lower K_0.8)
+    head_l1:      float = 0.06
     pool_mode:    str   = 'mean'  # 'mean' or 'max' for fg_z_pool
     # Checkpoint
     load_sae_from:  str  = ''
@@ -902,16 +902,16 @@ def main():
     # ── Final evaluation ───────────────────────────────────────────────────────
     print(f"\n{'='*60}\nFinal Evaluation\n{'='*60}")
     test_acc = eval_acc(backbone, hook, feat_norm, sae, head, te_loader, cfg, device)
-    K08      = compute_K08(backbone, hook, feat_norm, sae, head, te_loader, cfg, device)
+    K095     = compute_K095(backbone, hook, feat_norm, sae, head, te_loader, cfg, device)
     interv   = compute_intervention(backbone, hook, feat_norm, sae, head,
                                      te_loader, cfg, cfg.intervention_ms, device)
 
     print(f"test_acc : {test_acc:.4f}")
-    print(f"K_0.95   : {K08:.1f}")
+    print(f"K_0.95   : {K095:.1f}")
     for m in cfg.intervention_ms:
         print(f"Interv@{m:2d}: drop={interv[m]['drop']:.4f}")
 
-    summary = {'acc': test_acc, 'K_0.95': K08,
+    summary = {'acc': test_acc, 'K_0.95': K095,
                'intervention': {str(m): interv[m] for m in cfg.intervention_ms},
                'n_segments': cfg.n_segments, 'fg_ratio': cfg.fg_ratio,
                'stage2_start': cfg.stage2_start}

@@ -73,11 +73,11 @@ python paper_scripts/compose_figures.py --run_dir ./runs/car     --tag _car     
 python paper_scripts/compose_figures.py --run_dir ./runs/flowers --tag _flowers --n 4 --n_e 6
 
 # Figure F: CBM reasoning (concept heatmaps + contribution bars)
-python paper_scripts/gen_fig_G_results.py
+python paper_scripts/gen_fig_F_reasoning.py
 # -> figures/fig_F_reasoning_{car,flowers}.png
 
 # Figure G: progressive concept removal curve
-python paper_scripts/gen_fig_F_progressive.py
+python paper_scripts/gen_fig_G_progressive.py
 # -> figures/fig_G_progressive_{car,flowers}.png
 
 # Figure H: concept sparsity curve (K_0.95)
@@ -317,12 +317,11 @@ python paper_scripts/compose_figures.py --run_dir ./models/flowers --tag _flower
 # figures saved to ./figures/
 ```
 
-### Figure F (progressive concept removal)
+### Figure G (progressive concept removal)
 
 ```bash
-python paper_scripts/gen_fig_F_progressive.py
-# -> figures/fig_F_progressive_car.png
-# -> figures/fig_F_progressive_flowers.png
+python paper_scripts/gen_fig_G_progressive.py
+# -> figures/fig_G_progressive_{car,flowers}.png
 ```
 
 ---
@@ -370,8 +369,8 @@ vg_cbm/
 │   └── fig_H_sparsity.png
 ├── paper_scripts/
 │   ├── compose_figures.py          generates figures A-E
-│   ├── gen_fig_F_progressive.py    generates figure F
-│   ├── gen_fig_G_results.py        generates figure G (CBM reasoning)
+│   ├── gen_fig_F_reasoning.py      generates figure F (CBM reasoning)
+│   ├── gen_fig_G_progressive.py    generates figure G (progressive concept removal)
 │   └── gen_fig_H_sparsity.py       generates figure H (concept sparsity K_0.95)
 ├── analysis/
 │   ├── layer_scan.py               layer2/3/4 SAE-Z accuracy comparison (CIFAR-100)

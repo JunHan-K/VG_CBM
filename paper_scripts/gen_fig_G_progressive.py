@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-gen_fig_F_progressive.py  v2
+gen_fig_G_progressive.py  v2
 Layout per row: [original] | [concept attribution map] | [progressive curve]
 - concept attribution map: weighted heatmap of all active concepts (W_y * z_sp summed)
 - progressive curve: greedy 1-by-1 removal, no overlapping labels

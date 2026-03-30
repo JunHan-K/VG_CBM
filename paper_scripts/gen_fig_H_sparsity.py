@@ -11,7 +11,7 @@ For each test sample:
 
 Output: curve showing what fraction of confidence mass is explained
         by the top-N concepts, for N = 1 .. 4096.
-K_0.8 (where curve crosses 0.8) is annotated with a dashed line.
+K_0.95 (where curve crosses 0.95) is annotated with a dashed line.
 """
 
 import os, sys, json
@@ -93,7 +93,7 @@ def collect_curves(run_dir, dataset, device, max_samples=None):
     Returns:
         curves : (N_samples, K) array — each row is the sorted cumulative
                  contribution fraction for one correctly-predicted sample
-        k08_mean : float — mean K_0.8 across samples
+        k095_mean : float — mean K_0.95 across samples
     """
     backbone, hook, feat_norm, sae, head, cfg = load_model(run_dir, device)
     K = cfg.d_in * cfg.expansion
@@ -144,12 +144,12 @@ def collect_curves(run_dir, dataset, device, max_samples=None):
     print(f'  Done. {n_correct} correctly predicted samples used.')
     curves = np.stack(cumulative_curves, axis=0)   # (N, K)
 
-    # K_0.8 per sample: first index where cumsum >= 0.8, then +1 for count
-    k08_per = (curves < 0.8).sum(axis=1) + 1
-    k08_mean = float(k08_per.mean())
-    print(f'  K_0.8 = {k08_mean:.1f}  (range {k08_per.min()} to {k08_per.max()})')
+    # K_0.95 per sample: first index where cumsum >= 0.95, then +1 for count
+    k095_per = (curves < 0.95).sum(axis=1) + 1
+    k095_mean = float(k095_per.mean())
+    print(f'  K_0.95 = {k095_mean:.1f}  (range {k095_per.min()} to {k095_per.max()})')
 
-    return curves, k08_mean
+    return curves, k095_mean
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
