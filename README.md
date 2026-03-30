@@ -72,13 +72,13 @@ Outputs are saved to `./runs/{flowers,car}/`:
 python paper_scripts/compose_figures.py --run_dir ./runs/car     --tag _car     --n 4 --n_e 6
 python paper_scripts/compose_figures.py --run_dir ./runs/flowers --tag _flowers --n 4 --n_e 6
 
-# Figure F: progressive concept removal curve
-python paper_scripts/gen_fig_F_progressive.py
-# -> figures/fig_F_progressive_{car,flowers}.png
-
-# Figure G: CBM reasoning (concept heatmaps + contribution bars)
+# Figure F: CBM reasoning (concept heatmaps + contribution bars)
 python paper_scripts/gen_fig_G_results.py
-# -> figures/fig_G_reasoning_{car,flowers}.png
+# -> figures/fig_F_reasoning_{car,flowers}.png
+
+# Figure G: progressive concept removal curve
+python paper_scripts/gen_fig_F_progressive.py
+# -> figures/fig_G_progressive_{car,flowers}.png
 
 # Figure H: concept sparsity curve (K_0.95)
 python paper_scripts/gen_fig_H_sparsity.py
@@ -365,8 +365,8 @@ vg_cbm/
 │   ├── fig_C_fg_mask_{car,flowers}.png
 │   ├── fig_D_masking_{car,flowers}.png
 │   ├── fig_E_concepts_{car,flowers}.png
-│   ├── fig_F_progressive_{car,flowers}.png
-│   ├── fig_G_reasoning_{car,flowers}.png
+│   ├── fig_F_reasoning_{car,flowers}.png
+│   ├── fig_G_progressive_{car,flowers}.png
 │   └── fig_H_sparsity.png
 ├── paper_scripts/
 │   ├── compose_figures.py          generates figures A-E

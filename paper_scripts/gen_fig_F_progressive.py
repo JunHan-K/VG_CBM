@@ -278,7 +278,7 @@ if __name__ == '__main__':
         flowers_run, flowers_ds, flowers_idx, flowers_cls, device, MAX_REMOVE)
     make_figure(
         flowers_samples,
-        OUT_DIR / 'fig_F_progressive_flowers.png',
+        OUT_DIR / 'fig_G_progressive_flowers.png',
         'F. Concept Intervention — Flowers102  (acc = 82.9%)',
         max_remove=MAX_REMOVE)
 
@@ -294,7 +294,7 @@ if __name__ == '__main__':
         car_run, car_ds, car_idx, car_class_names, device, MAX_REMOVE)
     make_figure(
         car_samples,
-        OUT_DIR / 'fig_F_progressive_car.png',
+        OUT_DIR / 'fig_G_progressive_car.png',
         'F. Concept Intervention — Car-Best  (acc = 73.7%)',
         max_remove=MAX_REMOVE)
 

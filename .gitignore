@@ -26,6 +26,9 @@ data/flowers*
 data/hf_cache/
 data/*.json
 
+# Intermediate computation cache
+figures/*.npz
+
 # Misc
 .DS_Store
 Thumbs.db

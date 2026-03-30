@@ -352,7 +352,7 @@ if __name__ == '__main__':
 
     make_reasoning_figure(
         car_run, car_ds, car_idx, car_class_names,
-        OUT_DIR / 'fig_G_reasoning_car.png',
+        OUT_DIR / 'fig_F_reasoning_car.png',
         'G. CBM Reasoning — Car-Best  (acc = 73.7%)',
         device)
 
@@ -371,7 +371,7 @@ if __name__ == '__main__':
 
     make_reasoning_figure(
         flowers_run, flowers_ds, flower_idx, FLOWERS_NAMES,
-        OUT_DIR / 'fig_G_reasoning_flowers.png',
+        OUT_DIR / 'fig_F_reasoning_flowers.png',
         'G. CBM Reasoning — Flowers102  (acc = 82.9%)',
         device)
 
