@@ -238,16 +238,20 @@ def scan_dataset(run_dir, dataset, class_names, device,
 
 # ─────────────────────────────────────────────────────────────────────────────
 def make_reasoning_figure(run_dir, dataset, indices, class_names, out_path,
-                          title, device, n_concepts=4):
+                          title, device, n_concepts=3):
     """
-    For each index: [original | concept1 | concept2 | concept3 | concept4 | bar chart]
+    For each index: [original | concept1 | concept2 | concept3 | bar chart]
+    Labels sit below each panel, not overlapping the image.
     """
     backbone, hook, feat_norm, sae, head, cfg = load_model(run_dir, device)
     n = len(indices)
 
-    fig = plt.figure(figsize=(18, 4.2 * n))
-    outer = gridspec.GridSpec(n, 1, figure=fig, hspace=0.55,
-                              left=0.03, right=0.97, top=0.95, bottom=0.03)
+    # Taller rows + more bottom margin so xlabel text has room
+    fig = plt.figure(figsize=(16, 5.0 * n))
+    outer = gridspec.GridSpec(n, 1, figure=fig, hspace=0.70,
+                              left=0.03, right=0.97, top=0.93, bottom=0.04)
+
+    colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6']
 
     for row, idx in enumerate(indices):
         img_t, label = dataset[idx]
@@ -256,62 +260,64 @@ def make_reasoning_figure(run_dir, dataset, indices, class_names, out_path,
             img_t, img_pil, backbone, hook, feat_norm, sae, head, cfg, device)
 
         cn = class_names[pred] if pred < len(class_names) else str(pred)
+        short_cn = cn if len(cn) <= 24 else cn[:23] + '…'
 
-        # Top concept indices by contribution W_y[k] * z_pool[k]
-        contrib  = (W_y * z_pool_cpu).numpy()
-        top_idx  = np.argsort(contrib)[::-1][:max(n_concepts, 12)]
+        contrib     = (W_y * z_pool_cpu).numpy()
+        top_idx     = np.argsort(contrib)[::-1][:max(n_concepts, 12)]
         top_contrib = contrib[top_idx]
 
-        # Inner grid: [orig | c1 | c2 | c3 | c4 | bar]
+        # Inner grid: [orig | c1 | c2 | c3 | bar]
         inner = gridspec.GridSpecFromSubplotSpec(
             1, n_concepts + 2, subplot_spec=outer[row],
-            width_ratios=[1] * (n_concepts + 1) + [1.8],
-            wspace=0.08)
+            width_ratios=[1] * (n_concepts + 1) + [1.6],
+            wspace=0.12)
 
-        # Original image
+        # ── Original image ────────────────────────────────────────────────────
         ax0 = fig.add_subplot(inner[0])
         ax0.imshow(img_pil)
-        ax0.axis('off')
-        short_cn = cn if len(cn) <= 22 else cn[:21] + '…'
-        ax0.set_title(f'{short_cn}\n{conf:.0%}', fontsize=8.5,
-                      fontweight='bold', color='#1a1a1a', pad=4)
+        ax0.set_xticks([]); ax0.set_yticks([])
+        for sp in ax0.spines.values():
+            sp.set_visible(True); sp.set_edgecolor('#333'); sp.set_linewidth(1.5)
+        # Label below the image via xlabel
+        ax0.set_xlabel(f'{short_cn}\n{conf:.0%}',
+                       fontsize=9, fontweight='bold', color='#1a1a1a',
+                       labelpad=6)
 
-        # Concept heatmap panels
-        colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12',
-                  '#9b59b6', '#1abc9c', '#e67e22', '#e91e63']
+        # ── Concept heatmap panels ─────────────────────────────────────────────
         for ci in range(n_concepts):
             kid  = int(top_idx[ci])
             cval = float(top_contrib[ci])
+            c    = colors[ci % len(colors)]
             ax   = fig.add_subplot(inner[ci + 1])
             overlay = concept_heatmap_overlay(img_pil, slic_224, z_sp_cpu,
                                               kid, cfg.n_segments)
             ax.imshow(overlay)
-            ax.axis('off')
-            c = colors[ci % len(colors)]
+            ax.set_xticks([]); ax.set_yticks([])
             for sp in ax.spines.values():
                 sp.set_visible(True); sp.set_edgecolor(c); sp.set_linewidth(2.5)
-            ax.set_title(f'Concept {ci+1}\n({cval:.3f})', fontsize=7.5,
-                         color=c, pad=3)
+            ax.set_xlabel(f'Concept {ci + 1}  ({cval:.3f})',
+                          fontsize=8.5, color=c, labelpad=6)
 
-        # Contribution bar chart (top-12)
+        # ── Contribution bar chart ─────────────────────────────────────────────
         ax_bar = fig.add_subplot(inner[n_concepts + 1])
-        n_bars = min(12, len(top_idx))
-        bar_vals = top_contrib[:n_bars]
-        bar_labels = [f'C{i+1}' for i in range(n_bars)]
-        bar_colors = [colors[i % len(colors)] if i < n_concepts else '#ccc'
-                      for i in range(n_bars)]
-        bars = ax_bar.barh(range(n_bars)[::-1], bar_vals,
-                           color=bar_colors, edgecolor='none', height=0.65)
+        n_bars      = min(12, len(top_idx))
+        bar_vals    = top_contrib[:n_bars]
+        bar_labels  = [f'C{i+1}' for i in range(n_bars)]
+        bar_colors  = [colors[i % len(colors)] if i < n_concepts else '#ddd'
+                       for i in range(n_bars)]
+        ax_bar.barh(range(n_bars)[::-1], bar_vals,
+                    color=bar_colors, edgecolor='none', height=0.6)
         ax_bar.set_yticks(range(n_bars)[::-1])
-        ax_bar.set_yticklabels(bar_labels, fontsize=7.5)
-        ax_bar.set_xlabel('W · z  (contribution)', fontsize=7.5)
+        ax_bar.set_yticklabels(bar_labels, fontsize=8)
+        ax_bar.set_xlabel('W · z  (contribution)', fontsize=8, labelpad=6)
         ax_bar.spines[['top', 'right']].set_visible(False)
-        ax_bar.tick_params(axis='x', labelsize=7)
-        ax_bar.set_title('Top concept\ncontributions', fontsize=8, pad=4, color='#555')
+        ax_bar.tick_params(axis='x', labelsize=7.5)
+        ax_bar.set_title('Concept contributions', fontsize=8.5,
+                         pad=8, color='#444')
 
         print(f'  row {row}: idx={idx}  {cn[:40]:<40}  conf={conf:.1%}')
 
-    fig.suptitle(title, fontsize=12, fontweight='bold', y=1.01)
+    fig.suptitle(title, fontsize=13, fontweight='bold', y=0.97)
     plt.savefig(out_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f'Saved -> {out_path}')
