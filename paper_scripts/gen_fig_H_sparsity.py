@@ -221,8 +221,15 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(figsize=(7, 5.0))
     fig.subplots_adjust(left=0.12, right=0.95, top=0.88, bottom=0.13)
 
-    ax.fill_between(x_rank, car_p10, car_p90, alpha=0.13, color=CAR_COLOR)
-    ax.fill_between(x_rank, fl_p10,  fl_p90,  alpha=0.13, color=FLW_COLOR)
+    # Draw individual sample curves (random subset) to show real data
+    rng = np.random.default_rng(42)
+    n_show = 60
+    for curves, col in [(car_curves, CAR_COLOR), (fl_curves, FLW_COLOR)]:
+        idx = rng.choice(len(curves), size=min(n_show, len(curves)), replace=False)
+        for i in idx:
+            ax.plot(x_rank, curves[i], color=col, linewidth=0.4, alpha=0.08)
+
+    # Mean on top
     ax.plot(x_rank, car_mean, color=CAR_COLOR, linewidth=2.2,
             label=f'Car-Best   (K$_{{0.8}}$ = {car_k08:.0f})')
     ax.plot(x_rank, fl_mean,  color=FLW_COLOR, linewidth=2.2,
