@@ -249,19 +249,19 @@ if __name__ == '__main__':
     ax.axvline(car_k08, color=CAR_COLOR, linewidth=1.2, linestyle=':')
     ax.axvline(fl_k08,  color=FLW_COLOR, linewidth=1.2, linestyle=':')
 
-    # Annotations — placed in the open left region, arrows pointing to 95% intercepts
+    # Annotations — text on left, arrows pointing to 95% intercepts on each curve
     ax.annotate(f'Car-Best: {car_k08:.0f}  ({car_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(car_k08, 0.95), xytext=(x_end * 0.18, 0.97),
+                xy=(car_k08, 0.95), xytext=(x_end * 0.15, 0.975),
                 fontsize=9, color=CAR_COLOR,
-                arrowprops=dict(arrowstyle='->', color=CAR_COLOR, lw=1.1,
-                                connectionstyle='arc3,rad=-0.2'),
-                bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=CAR_COLOR, lw=0.9))
+                arrowprops=dict(arrowstyle='->', color=CAR_COLOR, lw=1.8,
+                                connectionstyle='arc3,rad=-0.25'),
+                bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=CAR_COLOR, lw=1.2))
     ax.annotate(f'Flowers102: {fl_k08:.0f}  ({fl_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(fl_k08, 0.95), xytext=(x_end * 0.18, 0.84),
+                xy=(fl_k08, 0.95), xytext=(x_end * 0.15, 0.82),
                 fontsize=9, color=FLW_COLOR,
-                arrowprops=dict(arrowstyle='->', color=FLW_COLOR, lw=1.1,
-                                connectionstyle='arc3,rad=0.2'),
-                bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=FLW_COLOR, lw=0.9))
+                arrowprops=dict(arrowstyle='->', color=FLW_COLOR, lw=1.8,
+                                connectionstyle='arc3,rad=0.25'),
+                bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=FLW_COLOR, lw=1.2))
 
     ax.set_xlabel('Concepts (ranked by contribution)', fontsize=10.5)
     ax.set_ylabel('Cumulative confidence fraction', fontsize=10.5)
