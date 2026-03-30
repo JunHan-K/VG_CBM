@@ -211,91 +211,60 @@ if __name__ == '__main__':
     FLW_COLOR = '#27ae60'
     THRESH_COLORS = ['#bdc3c7', '#95a5a6', '#e74c3c', '#8e44ad', '#2c3e50']
 
-    # ── Figure: two panels ────────────────────────────────────────────────────
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(13, 5.0),
-                                  gridspec_kw={'width_ratios': [1.5, 1]})
-    fig.subplots_adjust(left=0.07, right=0.97, top=0.88, bottom=0.14, wspace=0.35)
+    # ── Find x-range where mean curve first crosses 0.40 ─────────────────────
+    x_start = int(np.argmax(((car_mean + fl_mean) / 2) >= 0.40))
+    x_start = max(0, x_start - 20)   # small left margin
 
-    # ── Left: cumulative curve ─────────────────────────────────────────────────
-    ax.fill_between(x_rank, car_p10, car_p90, alpha=0.12, color=CAR_COLOR)
-    ax.fill_between(x_rank, fl_p10,  fl_p90,  alpha=0.12, color=FLW_COLOR)
-    ax.plot(x_rank, car_mean, color=CAR_COLOR, linewidth=2.0,
+    # ── Single panel ─────────────────────────────────────────────────────────
+    fig, ax = plt.subplots(figsize=(8, 5.0))
+    fig.subplots_adjust(left=0.11, right=0.93, top=0.88, bottom=0.13)
+
+    ax.fill_between(x_rank, car_p10, car_p90, alpha=0.13, color=CAR_COLOR)
+    ax.fill_between(x_rank, fl_p10,  fl_p90,  alpha=0.13, color=FLW_COLOR)
+    ax.plot(x_rank, car_mean, color=CAR_COLOR, linewidth=2.2,
             label=f'Car-Best   (K$_{{0.8}}$ = {car_k08:.0f})')
-    ax.plot(x_rank, fl_mean,  color=FLW_COLOR, linewidth=2.0,
+    ax.plot(x_rank, fl_mean,  color=FLW_COLOR, linewidth=2.2,
             label=f'Flowers102 (K$_{{0.8}}$ = {fl_k08:.0f})')
 
-    # Draw all threshold lines, highlight 80%
+    # Threshold lines
     for thresh, tc in zip(THRESHOLDS, THRESH_COLORS):
-        lw  = 1.6 if thresh == 0.8 else 0.8
-        ls  = '--' if thresh == 0.8 else ':'
+        lw = 1.6 if thresh == 0.8 else 0.85
+        ls = '--' if thresh == 0.8 else ':'
         ax.axhline(thresh, color=tc, linewidth=lw, linestyle=ls, zorder=1)
-        ax.text(K_TOTAL * 0.995, thresh + 0.008,
+        ax.text(K_TOTAL * 0.993, thresh + 0.007,
                 f'{int(thresh*100)}%', ha='right', va='bottom',
-                fontsize=8, color=tc,
+                fontsize=8.5, color=tc,
                 fontweight='bold' if thresh == 0.8 else 'normal')
 
-    # K_0.8 vertical markers — spaced to avoid overlap
+    # K_0.8 vertical markers
     ax.axvline(car_k08, color=CAR_COLOR, linewidth=1.2, linestyle=':')
     ax.axvline(fl_k08,  color=FLW_COLOR, linewidth=1.2, linestyle=':')
 
-    # Car annotation: above the 80% line
-    ax.annotate(f'{car_k08:.0f}  ({car_k08/K_TOTAL*100:.1f}%)',
-                xy=(car_k08, 0.8), xytext=(car_k08 + 180, 0.86),
-                fontsize=8.5, color=CAR_COLOR,
+    # Annotations — car above, flowers below
+    ax.annotate(f'{car_k08:.0f}  ({car_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
+                xy=(car_k08, 0.8), xytext=(car_k08 + 130, 0.87),
+                fontsize=9, color=CAR_COLOR,
                 arrowprops=dict(arrowstyle='->', color=CAR_COLOR, lw=1.1),
-                bbox=dict(boxstyle='round,pad=0.25', fc='white', ec=CAR_COLOR, lw=0.8))
-
-    # Flowers annotation: below the 80% line
-    ax.annotate(f'{fl_k08:.0f}  ({fl_k08/K_TOTAL*100:.1f}%)',
-                xy=(fl_k08, 0.8), xytext=(fl_k08 + 180, 0.70),
-                fontsize=8.5, color=FLW_COLOR,
+                bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=CAR_COLOR, lw=0.9))
+    ax.annotate(f'{fl_k08:.0f}  ({fl_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
+                xy=(fl_k08, 0.8), xytext=(fl_k08 + 130, 0.71),
+                fontsize=9, color=FLW_COLOR,
                 arrowprops=dict(arrowstyle='->', color=FLW_COLOR, lw=1.1),
-                bbox=dict(boxstyle='round,pad=0.25', fc='white', ec=FLW_COLOR, lw=0.8))
+                bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=FLW_COLOR, lw=0.9))
 
-    ax.set_xlabel('Concepts (ranked by contribution)', fontsize=10)
-    ax.set_ylabel('Cumulative confidence fraction', fontsize=10)
-    ax.set_xlim(0, K_TOTAL)
-    ax.set_ylim(0, 1.05)
-    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
-    ax.set_yticklabels(['0%', '20%', '40%', '60%', '80%', '100%'])
+    ax.set_xlabel('Concepts (ranked by contribution)', fontsize=10.5)
+    ax.set_ylabel('Cumulative confidence fraction', fontsize=10.5)
+    ax.set_xlim(x_start, K_TOTAL)
+    ax.set_ylim(0.38, 1.04)
+    ax.set_yticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+    ax.set_yticklabels(['40%', '50%', '60%', '70%', '80%', '90%', '100%'])
     ax.spines[['top', 'right']].set_visible(False)
-    ax.legend(fontsize=9, framealpha=0.9, loc='lower right')
-    ax.grid(axis='y', linestyle='--', alpha=0.25)
-    ax.set_title('Cumulative contribution of top-N concepts', fontsize=10, pad=6)
+    ax.legend(fontsize=10, framealpha=0.9, loc='lower right')
+    ax.grid(axis='y', linestyle='--', alpha=0.28)
+    ax.set_title('Cumulative contribution of top-N concepts to predicted class confidence',
+                 fontsize=10, pad=8, color='#333')
 
-    # ── Right: concepts needed per threshold ──────────────────────────────────
-    x_thr   = np.array([t * 100 for t in THRESHOLDS])
-    bar_w   = 6.0
-
-    for i, (ks, col, label) in enumerate([(car_ks, CAR_COLOR, 'Car-Best'),
-                                           (fl_ks,  FLW_COLOR, 'Flowers102')]):
-        offset = (i - 0.5) * bar_w
-        bars = ax2.bar(x_thr + offset, ks, width=bar_w * 0.9,
-                       color=col, alpha=0.85, label=label)
-        # Label on top of each bar
-        for rect, k in zip(bars, ks):
-            ax2.text(rect.get_x() + rect.get_width() / 2,
-                     rect.get_height() + 15,
-                     f'{int(round(k))}', ha='center', va='bottom',
-                     fontsize=7.5, color=col)
-
-    # Highlight the 80% bars with a box
-    ax2.axvspan(77, 83, alpha=0.08, color='#e74c3c', zorder=0)
-    ax2.text(80, max(max(car_ks), max(fl_ks)) * 0.97, 'K$_{0.8}$',
-             ha='center', va='top', fontsize=9, color='#e74c3c', fontweight='bold')
-
-    ax2.set_xticks([int(t * 100) for t in THRESHOLDS])
-    ax2.set_xticklabels([f'{int(t*100)}%' for t in THRESHOLDS])
-    ax2.set_xlabel('Confidence threshold', fontsize=10)
-    ax2.set_ylabel('Concepts required (K)', fontsize=10)
-    ax2.set_title('Concepts needed per threshold\n(diminishing returns above 80%)',
-                  fontsize=10, pad=6)
-    ax2.spines[['top', 'right']].set_visible(False)
-    ax2.legend(fontsize=9, framealpha=0.9)
-    ax2.grid(axis='y', linestyle='--', alpha=0.3)
-    ax2.set_ylim(0, max(max(car_ks), max(fl_ks)) * 1.18)
-
-    fig.suptitle('H. Concept Sparsity', fontsize=13, fontweight='bold', y=0.98)
+    fig.suptitle('H. Concept Sparsity', fontsize=13, fontweight='bold', y=0.97)
 
     out_path = OUT_DIR / 'fig_H_sparsity.png'
     plt.savefig(out_path, dpi=150, bbox_inches='tight')
