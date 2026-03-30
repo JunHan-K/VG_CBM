@@ -7,13 +7,9 @@ Layout per row: [original] | [concept attribution map] | [progressive curve]
 """
 
 import os, sys, json
-_HERE = os.path.dirname(os.path.abspath(__file__))
+_HERE   = os.path.dirname(os.path.abspath(__file__))
 _VG_CBM = os.path.join(_HERE, '..')       # vg_cbm/
-_CBM_SAE = os.path.join(_VG_CBM, '..', 'CBM_SAE')  # CBM_SAE/ (data lives here)
-sys.path.insert(0, _HERE)
 sys.path.insert(0, _VG_CBM)
-sys.path.insert(0, _CBM_SAE)
-os.chdir(_CBM_SAE)  # data_root = ./data
 
 import numpy as np
 import torch
@@ -268,9 +264,9 @@ if __name__ == '__main__':
 
     # ── Flowers — high-conf + high-drop test samples ───────────────────────────
     print('\n=== Flowers102 ===')
-    flowers_run = os.path.join(_HERE, '..', 'models', 'flowers')
-    flowers_ds  = torchvision.datasets.Flowers102('./data', split='test',
-                                                   download=False, transform=val_tf)
+    flowers_run = os.path.join(_VG_CBM, 'models', 'flowers')
+    flowers_ds  = torchvision.datasets.Flowers102(
+        os.path.join(_VG_CBM, 'data'), split='test', download=False, transform=val_tf)
     flowers_cls = [str(i) for i in range(102)]
     flowers_idx = [1244, 90, 913]   # high-conf + high-drop: 81.7%→7%, 86.5%→14%, 91.0%→24%
 
@@ -284,10 +280,10 @@ if __name__ == '__main__':
 
     # ── Car — high-conf + high-drop test samples ───────────────────────────────
     print('\n=== Car Best ===')
-    with open('./data/carbest_classes.json') as f:
+    car_run = os.path.join(_VG_CBM, 'models', 'car')
+    with open(os.path.join(car_run, 'carbest_classes.json')) as f:
         car_class_names = json.load(f)['class_names']
-    car_run = os.path.join(_HERE, '..', 'models', 'car')
-    car_ds  = ImageFolder('./data/stanford_cars_hf_carbest/test', transform=val_tf)
+    car_ds  = ImageFolder(os.path.join(_VG_CBM, 'data', 'stanford_cars_hf_carbest', 'test'), transform=val_tf)
     car_idx = [279, 1059, 872]   # high-conf + high-drop: 93.2%→21%, 88.3%→16%, 80.8%→10%
 
     car_samples = build_samples_from_dataset(

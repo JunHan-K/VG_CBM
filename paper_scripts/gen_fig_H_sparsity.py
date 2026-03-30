@@ -25,12 +25,9 @@ from pathlib import Path
 from torchvision import transforms
 import torchvision
 
-_HERE    = os.path.dirname(os.path.abspath(__file__))
-_VG_CBM  = os.path.join(_HERE, '..')
-_CBM_SAE = os.path.join(_VG_CBM, '..', 'CBM_SAE')
+_HERE   = os.path.dirname(os.path.abspath(__file__))
+_VG_CBM = os.path.join(_HERE, '..')
 sys.path.insert(0, _VG_CBM)
-sys.path.insert(0, _CBM_SAE)
-os.chdir(_CBM_SAE)   # data/ and models/ are relative to here
 
 from src.backbone   import build_backbone
 from src.models     import FeatureNorm, SparseSAE, CBMHead, fg_z_pool
@@ -157,8 +154,6 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f'Device: {device}\n')
 
-    os.chdir(os.path.join(_HERE, '..'))   # so relative data paths work
-
     CACHE = OUT_DIR / 'fig_H_curves_cache.npz'
 
     if CACHE.exists():
@@ -169,14 +164,14 @@ if __name__ == '__main__':
         # ── Car-Best ──────────────────────────────────────────────────────────
         print('=== Car-Best ===')
         car_run  = os.path.join(_VG_CBM, 'models', 'car')
-        car_data = os.path.join(_CBM_SAE, 'data', 'stanford_cars_hf_carbest', 'test')
+        car_data = os.path.join(_VG_CBM, 'data', 'stanford_cars_hf_carbest', 'test')
         car_ds   = ImageFolder(car_data, transform=val_tf)
         car_curves, _ = collect_curves(car_run, car_ds, device)
 
         # ── Flowers102 ────────────────────────────────────────────────────────
         print('\n=== Flowers102 ===')
         fl_run  = os.path.join(_VG_CBM, 'models', 'flowers')
-        fl_data = os.path.join(_CBM_SAE, 'data')
+        fl_data = os.path.join(_VG_CBM, 'data')
         fl_ds   = torchvision.datasets.Flowers102(fl_data, split='test',
                                                   download=False, transform=val_tf)
         fl_curves, _ = collect_curves(fl_run, fl_ds, device)

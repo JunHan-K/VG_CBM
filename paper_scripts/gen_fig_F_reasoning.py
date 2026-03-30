@@ -19,12 +19,9 @@ Usage:
 """
 
 import os, sys, json, argparse
-_HERE    = os.path.dirname(os.path.abspath(__file__))
-_VG_CBM  = os.path.join(_HERE, '..')
-_CBM_SAE = os.path.join(_VG_CBM, '..', 'CBM_SAE')
+_HERE   = os.path.dirname(os.path.abspath(__file__))
+_VG_CBM = os.path.join(_HERE, '..')
 sys.path.insert(0, _VG_CBM)
-sys.path.insert(0, _CBM_SAE)
-os.chdir(_CBM_SAE)
 
 import numpy as np
 import torch
@@ -341,7 +338,7 @@ if __name__ == '__main__':
     car_run = os.path.join(_HERE, '..', 'models', 'car')
     with open(os.path.join(car_run, 'carbest_classes.json')) as f:
         car_class_names = json.load(f)['class_names']
-    car_ds = ImageFolder('./data/stanford_cars_hf_carbest/test', transform=val_tf)
+    car_ds = ImageFolder(os.path.join(_VG_CBM, 'data', 'stanford_cars_hf_carbest', 'test'), transform=val_tf)
 
     if args.scan:
         car_idx = scan_dataset(car_run, car_ds, car_class_names, device,
@@ -353,14 +350,14 @@ if __name__ == '__main__':
     make_reasoning_figure(
         car_run, car_ds, car_idx, car_class_names,
         OUT_DIR / 'fig_F_reasoning_car.png',
-        'G. CBM Reasoning — Car-Best  (acc = 73.7%)',
+        'F. CBM Reasoning — Car-Best  (acc = 73.7%)',
         device)
 
     # ── Flowers102 ────────────────────────────────────────────────────────────
     print('\n=== Flowers102 ===')
     flowers_run = os.path.join(_HERE, '..', 'models', 'flowers')
     flowers_ds  = torchvision.datasets.Flowers102(
-        './data', split='test', download=False, transform=val_tf)
+        os.path.join(_VG_CBM, 'data'), split='test', download=False, transform=val_tf)
 
     if args.scan:
         flower_idx = scan_dataset(flowers_run, flowers_ds, FLOWERS_NAMES, device,
@@ -372,7 +369,7 @@ if __name__ == '__main__':
     make_reasoning_figure(
         flowers_run, flowers_ds, flower_idx, FLOWERS_NAMES,
         OUT_DIR / 'fig_F_reasoning_flowers.png',
-        'G. CBM Reasoning — Flowers102  (acc = 82.9%)',
+        'F. CBM Reasoning — Flowers102  (acc = 82.9%)',
         device)
 
     print('\nDone.')
