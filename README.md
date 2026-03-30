@@ -61,7 +61,7 @@ Outputs are saved to `./runs/{flowers,car}/`:
 - `sae_checkpoint.pt` — trained SAE weights
 - `head_best.pt` — best CBMHead weights
 - `config.json` — full hyperparameter record
-- `final_stats.json` — accuracy, K_0.8, intervention results
+- `final_stats.json` — accuracy, K_0.95, intervention results
 - `concept_gallery/` — top-30 concept visualizations
 - `visuals/final/` — visual strips for test images
 
@@ -75,6 +75,14 @@ python paper_scripts/compose_figures.py --run_dir ./runs/flowers --tag _flowers 
 # Figure F: progressive concept removal curve
 python paper_scripts/gen_fig_F_progressive.py
 # -> figures/fig_F_progressive_{car,flowers}.png
+
+# Figure G: CBM reasoning (concept heatmaps + contribution bars)
+python paper_scripts/gen_fig_G_results.py
+# -> figures/fig_G_reasoning_{car,flowers}.png
+
+# Figure H: concept sparsity curve (K_0.95)
+python paper_scripts/gen_fig_H_sparsity.py
+# -> figures/fig_H_sparsity.png
 ```
 
 Pre-generated figures are available in `figures/`.
@@ -331,7 +339,7 @@ vg_cbm/
 │   ├── models.py                   FeatureNorm, SparseSAE, CBMHead, fg_z_pool
 │   ├── slic_utils.py               SLIC computation, superpixel feature extraction
 │   ├── training.py                 SAE and head training loops
-│   ├── evaluate.py                 K_0.8 and intervention evaluation
+│   ├── evaluate.py                 K_0.95 and intervention evaluation
 │   ├── losses.py                   sp_orth and diversity losses
 │   ├── visualize.py                visual strip generation
 │   └── datasets.py                 dataset loading utilities
@@ -351,16 +359,20 @@ vg_cbm/
 │       ├── final_stats.json
 │       ├── concept_gallery/
 │       └── visuals/final/
-├── figures/                        paper figures (A-F)
+├── figures/                        paper figures (A-H)
 │   ├── fig_A_slic_{car,flowers}.png
 │   ├── fig_B_deviation_{car,flowers}.png
 │   ├── fig_C_fg_mask_{car,flowers}.png
 │   ├── fig_D_masking_{car,flowers}.png
 │   ├── fig_E_concepts_{car,flowers}.png
-│   └── fig_F_progressive_{car,flowers}.png
+│   ├── fig_F_progressive_{car,flowers}.png
+│   ├── fig_G_reasoning_{car,flowers}.png
+│   └── fig_H_sparsity.png
 ├── paper_scripts/
 │   ├── compose_figures.py          generates figures A-E
-│   └── gen_fig_F_progressive.py    generates figure F
+│   ├── gen_fig_F_progressive.py    generates figure F
+│   ├── gen_fig_G_results.py        generates figure G (CBM reasoning)
+│   └── gen_fig_H_sparsity.py       generates figure H (concept sparsity K_0.95)
 ├── analysis/
 │   ├── layer_scan.py               layer2/3/4 SAE-Z accuracy comparison (CIFAR-100)
 │   ├── plot_layer_comparison.py    plots the layer comparison
