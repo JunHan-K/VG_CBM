@@ -211,13 +211,15 @@ if __name__ == '__main__':
     FLW_COLOR = '#27ae60'
     THRESH_COLORS = ['#bdc3c7', '#95a5a6', '#e74c3c', '#8e44ad', '#2c3e50']
 
-    # ── Find x-range where mean curve first crosses 0.40 ─────────────────────
-    x_start = int(np.argmax(((car_mean + fl_mean) / 2) >= 0.40))
-    x_start = max(0, x_start - 20)   # small left margin
+    # ── Clip x-axis to where curve is still changing (95th pct crosses 0.99) ──
+    avg_mean = (car_mean + fl_mean) / 2
+    x_start  = 0
+    x_end    = int(np.argmax(avg_mean >= 0.99)) + 50   # a bit past 99%
+    x_end    = min(x_end, K_TOTAL)
 
     # ── Single panel ─────────────────────────────────────────────────────────
-    fig, ax = plt.subplots(figsize=(8, 5.0))
-    fig.subplots_adjust(left=0.11, right=0.93, top=0.88, bottom=0.13)
+    fig, ax = plt.subplots(figsize=(7, 5.0))
+    fig.subplots_adjust(left=0.12, right=0.95, top=0.88, bottom=0.13)
 
     ax.fill_between(x_rank, car_p10, car_p90, alpha=0.13, color=CAR_COLOR)
     ax.fill_between(x_rank, fl_p10,  fl_p90,  alpha=0.13, color=FLW_COLOR)
@@ -226,12 +228,12 @@ if __name__ == '__main__':
     ax.plot(x_rank, fl_mean,  color=FLW_COLOR, linewidth=2.2,
             label=f'Flowers102 (K$_{{0.8}}$ = {fl_k08:.0f})')
 
-    # Threshold lines
+    # Threshold lines — labels placed just inside the right edge
     for thresh, tc in zip(THRESHOLDS, THRESH_COLORS):
         lw = 1.6 if thresh == 0.8 else 0.85
         ls = '--' if thresh == 0.8 else ':'
         ax.axhline(thresh, color=tc, linewidth=lw, linestyle=ls, zorder=1)
-        ax.text(K_TOTAL * 0.993, thresh + 0.007,
+        ax.text(x_end * 0.985, thresh + 0.012,
                 f'{int(thresh*100)}%', ha='right', va='bottom',
                 fontsize=8.5, color=tc,
                 fontweight='bold' if thresh == 0.8 else 'normal')
@@ -240,24 +242,25 @@ if __name__ == '__main__':
     ax.axvline(car_k08, color=CAR_COLOR, linewidth=1.2, linestyle=':')
     ax.axvline(fl_k08,  color=FLW_COLOR, linewidth=1.2, linestyle=':')
 
-    # Annotations — car above, flowers below
+    # Annotations — car above, flowers below the 80% line
+    ann_x = x_end * 0.38
     ax.annotate(f'{car_k08:.0f}  ({car_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(car_k08, 0.8), xytext=(car_k08 + 130, 0.87),
+                xy=(car_k08, 0.8), xytext=(ann_x, 0.88),
                 fontsize=9, color=CAR_COLOR,
                 arrowprops=dict(arrowstyle='->', color=CAR_COLOR, lw=1.1),
                 bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=CAR_COLOR, lw=0.9))
     ax.annotate(f'{fl_k08:.0f}  ({fl_k08/K_TOTAL*100:.1f}% of {K_TOTAL})',
-                xy=(fl_k08, 0.8), xytext=(fl_k08 + 130, 0.71),
+                xy=(fl_k08, 0.8), xytext=(ann_x, 0.70),
                 fontsize=9, color=FLW_COLOR,
                 arrowprops=dict(arrowstyle='->', color=FLW_COLOR, lw=1.1),
                 bbox=dict(boxstyle='round,pad=0.28', fc='white', ec=FLW_COLOR, lw=0.9))
 
     ax.set_xlabel('Concepts (ranked by contribution)', fontsize=10.5)
     ax.set_ylabel('Cumulative confidence fraction', fontsize=10.5)
-    ax.set_xlim(x_start, K_TOTAL)
-    ax.set_ylim(0.38, 1.04)
-    ax.set_yticks([0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
-    ax.set_yticklabels(['40%', '50%', '60%', '70%', '80%', '90%', '100%'])
+    ax.set_xlim(x_start, x_end)
+    ax.set_ylim(0.0, 1.04)
+    ax.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    ax.set_yticklabels(['0%', '20%', '40%', '60%', '80%', '100%'])
     ax.spines[['top', 'right']].set_visible(False)
     ax.legend(fontsize=10, framealpha=0.9, loc='lower right')
     ax.grid(axis='y', linestyle='--', alpha=0.28)
